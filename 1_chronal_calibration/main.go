@@ -1,25 +1,19 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"io"
-	"os"
 	"strconv"
+
+	"github.com/jonfriesen/adventofcode2018/util"
 )
 
 const startingFrequency = 0
 
 func main() {
+	fvs := []FrequencyValue{}
+	util.LoadInputFromPath("input", getLoaderFunction(&fvs))
 
-	f, err := os.Open("input")
-	if err != nil {
-		panic(err)
-	}
-
-	defer f.Close()
-
-	fc := createFreqCollFromReader(f)
+	fc := FrequencyCollection{startingFrequency, fvs}
 
 	fmt.Println("End frequency is: ", fc.findFrequency())
 	fmt.Println("First duplicate frequency is: ", fc.findDuplicateFrequency())
@@ -69,13 +63,10 @@ func (iv *FrequencyValue) asInt32() int32 {
 	return int32(n)
 }
 
-func createFreqCollFromReader(r io.Reader) FrequencyCollection {
-	f := []FrequencyValue{}
+func getLoaderFunction(f *[]FrequencyValue) util.InputFunc {
 
-	s := bufio.NewScanner(r)
-	for s.Scan() {
-		f = append(f, FrequencyValue(s.Text()))
+	return func(line string) {
+		*f = append(*f, FrequencyValue(line))
 	}
 
-	return FrequencyCollection{starting: startingFrequency, values: f}
 }

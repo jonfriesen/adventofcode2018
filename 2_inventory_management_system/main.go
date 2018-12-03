@@ -1,21 +1,19 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"io"
-	"os"
+
+	"github.com/jonfriesen/adventofcode2018/util"
 )
 
 func main() {
-	f, err := os.Open("input")
-	if err != nil {
-		panic(err)
-	}
 
-	defer f.Close()
+	bs := []BoxID{}
+	util.LoadInputFromPath("input", func(line string) {
+		bs = append(bs, BoxID(line))
+	})
 
-	bc := readListToCollection(f)
+	bc := BoxCollection{bs}
 
 	fmt.Println("Checksum", bc.calculateChecksum())
 	fmt.Println("Matching ID String", bc.findSingleDiffBox())
@@ -109,15 +107,4 @@ func (b *BoxID) checkDiffChars(c *BoxID) (bool, int) {
 	}
 
 	return true, diffIndex
-}
-
-func readListToCollection(r io.Reader) BoxCollection {
-	f := []BoxID{}
-
-	s := bufio.NewScanner(r)
-	for s.Scan() {
-		f = append(f, BoxID(s.Text()))
-	}
-
-	return BoxCollection{values: f}
 }
